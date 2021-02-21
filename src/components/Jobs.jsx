@@ -46,15 +46,15 @@ font-size: initial;
 const Jobs = ({ jobs }) => {
 
     return (
-        <>
-            <JobItem>
+        jobs.map(({ item }) => {
+            return <JobItem key={item.id}>
                 <Card lineHeight="2">
                     <Card.Body>
                         <JobLine>
                             <div>
-                                <Title>JobName</Title>
+                                <Title>{item.name}</Title>
                                 <JobDesc>
-                                    <p>contract type</p> {" - "} <p>office name</p>
+                                    <p>{item.contract_type.en}</p> {" - "} <p>{item.office.name}</p>
                                 </JobDesc>
                             </div>
                             <Button variant="tertiary">See more</Button>
@@ -62,39 +62,9 @@ const Jobs = ({ jobs }) => {
                     </Card.Body>
                 </Card>
             </JobItem>
+        }
+        )
 
-            <JobItem>
-                <Card lineHeight="2">
-                    <Card.Body>
-                        <JobLine>
-                            <div>
-                                <Title>JobName</Title>
-                                <JobDesc>
-                                    <p>contract type</p> {" - "} <p>office name</p>
-                                </JobDesc>
-                            </div>
-                            <Button variant="tertiary">See more</Button>
-                        </JobLine>
-                    </Card.Body>
-                </Card>
-            </JobItem>
-
-            <JobItem>
-                <Card lineHeight="2">
-                    <Card.Body>
-                        <JobLine>
-                            <div>
-                                <Title>JobName</Title>
-                                <JobDesc>
-                                    <p>contract type</p> {" - "} <p>office name</p>
-                                </JobDesc>
-                            </div>
-                            <Button variant="tertiary">See more</Button>
-                        </JobLine>
-                    </Card.Body>
-                </Card>
-            </JobItem>
-        </>
     )
 }
 

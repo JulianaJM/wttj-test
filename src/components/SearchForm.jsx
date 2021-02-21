@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { ConnectedField } from '@welcome-ui/connected-field'
 import { InputText } from '@welcome-ui/input-text'
-import { Form } from 'react-final-form'
+import { Form, FormSpy } from 'react-final-form'
 import { Select } from '@welcome-ui/select'
-import { format, compareAsc } from 'date-fns'
 import styled from 'styled-components'
 
 
@@ -27,78 +26,13 @@ margin-bottom:10px;
 `;
 
 
-const SearchForm = () => {
-
-    const [jobs, setJobs] = useState([])
-    const [contracts, setContracts] = useState([])
-    const [dates, setDates] = useState([])
-    const [groups, setGroups] = useState([])
-
-    const API_URL = process.env.REACT_APP_API_URL;
-
-
-    const onSubmit = async values => {
-        window.alert(JSON.stringify(values, 0, 2))
-    }
-
-
-    useEffect(() => {
-        fetch(API_URL)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                setJobs(data.jobs)
-
-            });
-    }, [])
-
-
-    useEffect(() => {
-        const contracts = [...new Set(jobs
-            .map((job) => job.contract_type.en))]
-            .map((contract => ({ label: contract, value: contract })))
-
-        const dates = jobs
-            .map((job) => {
-                const publishedAt = new Date(job.published_at);
-                return publishedAt;
-
-            })
-            .sort(compareAsc)
-        const uniqueDates = [...new Set(dates.map((date) => format(date, "yyyy/MM/dd")))]
-            .map((publishedAt => ({
-                label: publishedAt
-                , value: publishedAt
-            })))
-
-        const offices = [...new Set(jobs
-            .map((job) => job.office.name))]
-            .map((office => ({ label: office, value: office })))
-
-
-        const departments = [...new Set(jobs
-            .map((job) => job.department.name))]
-            .map((department => ({ label: department, value: department })))
-
-        const groups = departments.concat(offices)
-
-
-
-
-
-        setContracts(contracts)
-        setDates(uniqueDates)
-        setGroups(groups)
-
-
-
-    }, [jobs])
-
+const SearchForm = ({ contractOptions, dateOptions, groupOptions, onSubmit }) => {
     return (
         <Form initialValues={{}} onSubmit={onSubmit}
             render={({ handleSubmit, form, submitting, pristine, values }) => (
                 <form onSubmit={handleSubmit}>
+                    <FormSpy onChange={onSubmit} subscription={{ values: true }} />
+
                     <Wrapper>
                         <ItemForm>
                             <ConnectedField
@@ -109,10 +43,9 @@ const SearchForm = () => {
                         </ItemForm>
 
                         <ItemForm>
-
                             <ConnectedField
                                 component={Select}
-                                options={contracts}
+                                options={contractOptions}
                                 name="contract"
                                 placeholder="Contract Type"
                             />
@@ -122,7 +55,7 @@ const SearchForm = () => {
 
                             <ConnectedField
                                 component={Select}
-                                options={dates}
+                                options={dateOptions}
                                 name="date"
                                 placeholder="Date"
                             />
@@ -130,7 +63,7 @@ const SearchForm = () => {
                         <ItemForm last>
                             <ConnectedField
                                 component={Select}
-                                options={groups}
+                                options={groupOptions}
                                 name="groupby"
                                 placeholder="Group By"
                             />
