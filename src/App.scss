@@ -1,7 +1,11 @@
 .App {
 
   &__logo {
-    width: 30%;
+    width: 50%;
+
+    @media only screen and (min-width: 768px) {
+      width: 30%;
+    }
   }
   
   
@@ -18,7 +22,6 @@
     @media only screen and (min-width: 768px) {
       height: 40vmin;
       align-items: start;
-
     }
    
   }
@@ -26,13 +29,14 @@
   &__job {
   
     max-width: 1200px;
-    margin:0 auto;
+    margin:0 10px;
     height: 100vh;
     background: #E1E1E1;
   
     @media only screen and (min-width: 768px) {
       position: relative;
       top:-120px;
+      margin:0 auto;
   
     }
    

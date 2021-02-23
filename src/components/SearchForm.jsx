@@ -1,9 +1,11 @@
-import React from "react"
-import { ConnectedField } from '@welcome-ui/connected-field'
-import { InputText } from '@welcome-ui/input-text'
-import { Form, FormSpy } from 'react-final-form'
-import { Select } from '@welcome-ui/select'
-import styled from 'styled-components'
+import React from "react";
+import PropTypes from 'prop-types'
+import { ConnectedField } from '@welcome-ui/connected-field';
+import { InputText } from '@welcome-ui/input-text';
+import { Form, FormSpy } from 'react-final-form';
+import { Select } from '@welcome-ui/select';
+// import { DatePicker } from '@welcome-ui/date-picker';
+import styled from 'styled-components';
 
 
 const Wrapper = styled.div`
@@ -26,12 +28,12 @@ margin-bottom:10px;
 `;
 
 
-const SearchForm = ({ contractOptions, dateOptions, groupOptions, onSubmit }) => {
+const SearchForm = ({ contractOptions, groupOptions, onSubmit, onChange }) => {
     return (
         <Form initialValues={{}} onSubmit={onSubmit}
             render={({ handleSubmit, form, submitting, pristine, values }) => (
                 <form onSubmit={handleSubmit}>
-                    <FormSpy onChange={onSubmit} subscription={{ values: true }} />
+                    <FormSpy onChange={onChange} subscription={{ values: true }} />
 
                     <Wrapper>
                         <ItemForm>
@@ -51,15 +53,9 @@ const SearchForm = ({ contractOptions, dateOptions, groupOptions, onSubmit }) =>
                             />
                         </ItemForm>
 
-                        <ItemForm>
-
-                            <ConnectedField
-                                component={Select}
-                                options={dateOptions}
-                                name="date"
-                                placeholder="Date"
-                            />
-                        </ItemForm>
+                        {/* <ItemForm>
+                            <ConnectedField component={DatePicker} name="date" />
+                        </ItemForm> */}
                         <ItemForm last>
                             <ConnectedField
                                 component={Select}
@@ -74,5 +70,14 @@ const SearchForm = ({ contractOptions, dateOptions, groupOptions, onSubmit }) =>
         />
     )
 }
+
+
+SearchForm.propTypes = {
+    contractOptions: PropTypes.array.isRequired,
+    groupOptions: PropTypes.array.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+}
+
 
 export default SearchForm;

@@ -1,39 +1,45 @@
 import React, { useEffect, useRef, useState } from "react";
-import { format, compareAsc } from 'date-fns';
 import styled from 'styled-components';
 import { Box } from '@welcome-ui/box';
+import { Loader } from '@welcome-ui/loader'
 import SearchForm from '../components/SearchForm';
 import Jobs from '../components/Jobs';
-import { buildOption, uniqueArray } from "../utils/utils";
-import { initSearchData, search } from "../services/search";
+import { computeContracts, computeGroups, computeSearchTerms, initSearchData, search } from "../services/search";
+import { API_URL, DEFAULT_OPTIONS } from "../utils/constants";
 
 
 const Title = styled.h1`
-text-align: center;
-margin: 20px;
-
+    text-align: center;
+    margin: 20px;
 `;
 
 const Section = styled.section`
-margin: 20px 0;
+    margin: 20px 0;
 
-@media only screen and (min-width: 768px) {
-    margin: 40px 0;
-
-}
+    @media only screen and (min-width: 768px) {
+        margin: 40px 0;
+    }
 `;
 
-const API_URL = process.env.REACT_APP_API_URL;
+const LoaderWrapper = styled.div`
+    display:flex;
+    justify-content: center;
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+   
+`;
 
 const JobPage = () => {
+    const [allJobs, setAllJobs] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
+    const [contractOptions, setContractOptions] = useState([]);
+    const [groupOptions, setGroupOptions] = useState([]);
+    const [websitesUrls, setWebsitesUrls] = useState([]);
 
-    const [allData, setAllData] = useState([])
-    const [searchResults, setSearchResults] = useState([])
-    const [contractOptions, setContractOptions] = useState([])
-    const [dateOptions, setDateOptions] = useState([])
-    const [groupOptions, setGroupOptions] = useState([])
     const searchConnector = useRef();
-    const defaultOptions = [{ label: "", value: "" }]
+
 
     useEffect(() => {
         fetch(API_URL)
@@ -41,64 +47,53 @@ const JobPage = () => {
                 return response.json();
             })
             .then(function (data) {
-                setAllData(data.jobs)
-                searchConnector.current = initSearchData(data.jobs)
+                setAllJobs(data.jobs)
+                searchConnector.current = initSearchData(data.jobs);
+                setWebsitesUrls(data.websites);
             });
     }, [])
 
 
     useEffect(() => {
-        const contracts =
-            uniqueArray(allData.map((job) => job.contract_type.en))
-                .map((contract => (buildOption(contract, contract))))
+        const contracts = computeContracts(allJobs);
+        const groups = computeGroups(allJobs);
 
-        const unformattedDates = allData.map((job) => {
-            const key = format(new Date(job.published_at), "yyyy/MM/dd");
-            const value = job.published_at
-            return { key, value }
-        })
+        setContractOptions(contracts);
+        setGroupOptions(groups);
 
-        const sortedDates = unformattedDates.map((date) => new Date(date.value))
-            .sort(compareAsc)
+        getDefaultSearchResults(allJobs);
 
-        const dates =
-            uniqueArray(sortedDates.map((date) => format(date, "yyyy/MM/dd")))
-                .map((formattedDate, i) => {
-                    const unformatteddate = unformattedDates.find(date => date.key === formattedDate)
-                    return buildOption(formattedDate, unformatteddate.value)
-                })
+    }, [allJobs])
 
-        const offices = uniqueArray(allData
-            .map((job) => job.office.name))
-            .map((office => (buildOption(office, office))))
-
-
-        const departments =
-            uniqueArray(allData.map((job) => job.department.name))
-                .map((department => (buildOption(department, department))))
-
-        const groups = departments.concat(offices)
-
-        setContractOptions(contracts)
-        setDateOptions(dates)
-        setGroupOptions(groups)
-
-    }, [allData])
-
+    const getDefaultSearchResults = (allJobs) => {
+        //init with all jobs
+        const results = allJobs.map((job) => ({ item: { ...job } }));
+        setSearchResults(results);
+    }
 
     const handleSubmit = async values => {
-        if (searchConnector.current) {
-            const jobname = values.jobname || values.values.jobname || "";
-            const contract = values.contract || values.values.contract || "";
-            const date = values.date || values.values.date || "";
-            const groupby = values.groupby || values.values.groupby || "";
+        //search
+        const searchTerms = computeSearchTerms(values);
+        handleSearch(searchTerms);
+    }
 
+    const handleChange = async values => {
+        if (searchConnector.current) {
             //search
-            const searchTerms = `${jobname} | ${contract} | ${date} | ${groupby}`
-            const results = search(searchConnector.current, searchTerms)
-            setSearchResults(results);
+            const searchTerms = computeSearchTerms(values.values);
+            handleSearch(searchTerms);
         }
     }
+
+    const handleSearch = (searchTerms) => {
+        const results = search(searchConnector.current, searchTerms);
+        setSearchResults(results);
+
+        if (results.length === 0) {
+            getDefaultSearchResults(allJobs);
+        }
+    }
+
 
     return (
         <Box
@@ -108,15 +103,22 @@ const JobPage = () => {
             <Title>Our offers</Title>
             <Section>
                 <SearchForm
-                    contractOptions={defaultOptions.concat(contractOptions)}
-                    dateOptions={defaultOptions.concat(dateOptions)}
-                    groupOptions={defaultOptions.concat(groupOptions)}
+                    contractOptions={DEFAULT_OPTIONS.concat(contractOptions)}
+                    groupOptions={DEFAULT_OPTIONS.concat(groupOptions)}
                     onSubmit={handleSubmit}
+                    onChange={handleChange}
                 />
             </Section>
-            <Section>
-                <Jobs jobs={searchResults} />
-            </Section>
+            {searchResults.length === 0 ?
+                <LoaderWrapper>
+                    <Loader size={50} />
+                </LoaderWrapper>
+                :
+                <Section>
+                    <p>{searchResults.length} results found</p>
+                    <Jobs jobs={searchResults} websitesUrls={websitesUrls} />
+                </Section>
+            }
         </Box >
     )
 }
