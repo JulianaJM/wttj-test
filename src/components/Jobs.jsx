@@ -17,8 +17,7 @@ const JobLine = styled.div`
     flex-direction: column;
 
     .highlight {
-        background: #FFE166
-;
+        background: #FFE166;
     }
 
     @media only screen and (min-width: 768px) {

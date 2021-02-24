@@ -1,6 +1,8 @@
 .App {
     overflow: auto;
     font-family: "welcome-font, sans-serif";
+    padding-bottom: 10px;
+    height: 100vh;
 
   &__logo {
     width: 50%;
