@@ -37,6 +37,7 @@ const JobPage = () => {
     const [contractOptions, setContractOptions] = useState([]);
     const [groupOptions, setGroupOptions] = useState([]);
     const [websitesUrls, setWebsitesUrls] = useState([]);
+    const [highlightWords, setHightlightWords] = useState([]);
 
     const searchConnector = useRef();
 
@@ -89,6 +90,8 @@ const JobPage = () => {
         const results = search(searchConnector.current, searchTerms);
         setSearchResults(results);
 
+        setHightlightWords(searchTerms.split("|").filter(s=> s !== ""))
+
         if (results.length === 0) {
             getDefaultSearchResults(allJobs);
         }
@@ -115,8 +118,8 @@ const JobPage = () => {
                 </LoaderWrapper>
                 :
                 <Section>
-                    <p>{searchResults.length} results found</p>
-                    <Jobs jobs={searchResults} websitesUrls={websitesUrls} />
+                    <p><strong>{searchResults.length} results found</strong></p>
+                    <Jobs jobs={searchResults} websitesUrls={websitesUrls} highlightWords={highlightWords} />
                 </Section>
             }
         </Box >

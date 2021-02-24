@@ -25,7 +25,7 @@ export const computeSearchTerms = (values) => {
     // const date = values.date ? `^${values.date.toISOString()}$` : "";
     const groupby = values.groupby || "";
 
-    return `${jobname} | ${contract} | ${groupby}`
+    return `${jobname}|${contract}|${groupby}`
 }
 
 export const computeContracts = (jobs) => {

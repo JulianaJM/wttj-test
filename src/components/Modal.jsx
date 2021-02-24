@@ -111,7 +111,6 @@ const Modal = ({ children, title, btnFooterTitle, isOpen, onClose, onCtaClick })
     }
 
      const onClickOutside = (event) => {
-         debugger
          if (event.target.matches("#overlay")) {
             handleClose();
             event.preventDefault();

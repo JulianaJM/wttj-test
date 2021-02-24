@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import PropTypes from 'prop-types'
-import { Card } from '@welcome-ui/card'
-import { Button } from '@welcome-ui/button'
-import styled from 'styled-components'
+import PropTypes from 'prop-types';
+import Highlighter from "react-highlight-words";
+import { Card } from '@welcome-ui/card';
+import { Button } from '@welcome-ui/button';
+import styled from 'styled-components';
 import JobDescription from "./JobDescription";
 import { WEBSITE_REF } from "../utils/constants";
 
@@ -14,6 +15,11 @@ const JobItem = styled.div`
 const JobLine = styled.div`
     display:flex;
     flex-direction: column;
+
+    .highlight {
+        background: #FFE166
+;
+    }
 
     @media only screen and (min-width: 768px) {
         flex-direction: row;
@@ -28,6 +34,11 @@ const JobDesc = styled.div`
     p { 
         margin: 0 5px;
         font-size: initial;
+
+        .highlight {
+            background: #FFE166
+;
+        }
     }
 `;
 
@@ -41,7 +52,7 @@ const Title = styled.h2`
 `;
 
 
-const Jobs = ({ jobs, websitesUrls }) => {
+const Jobs = ({ jobs, websitesUrls, highlightWords }) => {
 
     const [activeJobId, setActiveJobId] = useState("")
 
@@ -66,11 +77,41 @@ const Jobs = ({ jobs, websitesUrls }) => {
                         <Card.Body>
                             <JobLine>
                                 <div>
-                                    <Title>{item.name}</Title>
+                                    <Title>
+                                        <Highlighter
+                                                highlightClassName="highlight"
+                                                searchWords={highlightWords}
+                                                autoEscape={true}
+                                                textToHighlight={item.name}
+                                            />
+                                    </Title>
                                     <JobDesc>
-                                        <p>{item.contract_type.en}</p> {" - "} 
-                                        <p>{item.office.name}</p> {" - "} 
-                                        <p>{item.department.name}</p>
+                                        <p>
+                                            <Highlighter
+                                                highlightClassName="highlight"
+                                                searchWords={highlightWords}
+                                                autoEscape={true}
+                                                textToHighlight={item.contract_type.en}
+                                            />
+                                        </p>
+                                        {" - "} 
+                                         <p>
+                                             <Highlighter
+                                                highlightClassName="hightlight"
+                                                searchWords={highlightWords}
+                                                autoEscape={true}
+                                                textToHighlight={item.office.name}
+                                            />
+                                        </p>
+                                        {" - "} 
+                                        <p>
+                                            <Highlighter
+                                                highlightClassName="highlight"
+                                                searchWords={highlightWords}
+                                                autoEscape={true}
+                                                textToHighlight={item.department.name}
+                                            />
+                                        </p>
                                     </JobDesc>
                                 </div>
                                 <Button variant="tertiary" onClick={() => showDescription(item.id)}>See more</Button>
