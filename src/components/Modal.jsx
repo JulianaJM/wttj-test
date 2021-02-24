@@ -38,6 +38,7 @@ const ModalHeader = styled.div`
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid #969696;
+    letter-spacing: .2rem;
 
     button {
         background: none;
@@ -46,6 +47,10 @@ const ModalHeader = styled.div`
         font-size: 1.5rem;
         color: #969696;
         cursor: pointer;
+
+        &:hover {
+            color : #FFCD00;
+        }
     }
     
     h2 {
@@ -57,7 +62,7 @@ const ModalHeader = styled.div`
 const ModalBody = styled.div`
     overflow-y:scroll;
     height:75vh;
-    padding: 25px 5px;
+    padding: 25px 10px;
 
     @media only screen and (min-width: 768px) {
         width:100%;
@@ -157,7 +162,7 @@ const Modal = ({ children, title, btnFooterTitle, isOpen, onClose, onCtaClick })
                         {children}
                     </ModalBody>
                     <ModalFooter>
-                        <Button variant="tertiary" onClick={handleCtaClick} w={100}>{btnFooterTitle}</Button>
+                        <Button onClick={handleCtaClick} w={100}>{btnFooterTitle}</Button>
                     </ModalFooter>
                 </ModalWraper>
             </div>
