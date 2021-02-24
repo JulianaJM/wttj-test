@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Button } from '@welcome-ui/button';
+import FocusTrap from 'focus-trap-react';
 
 
 const Overlay = styled.div`
@@ -55,11 +56,12 @@ const ModalHeader = styled.div`
 
 const ModalBody = styled.div`
     overflow-y:scroll;
-    height:65vh;
+    height:75vh;
     padding: 25px 5px;
 
     @media only screen and (min-width: 768px) {
         width:100%;
+        height:65vh;
     }
 
     
@@ -109,15 +111,16 @@ const Modal = ({ children, title, btnFooterTitle, isOpen, onClose, onCtaClick })
     }
 
      const onClickOutside = (event) => {
+         debugger
          if (event.target.matches("#overlay")) {
-                handleClose();
-                event.preventDefault();
-              }
+            handleClose();
+            event.preventDefault();
+        }
     }
 
     useEffect(() => {
         document.addEventListener('scroll', saveScrollY);
-        document.addEventListener("click", onClickOutside, false);
+        document.addEventListener("click", onClickOutside);
 
         return () => {
             handleClose();
@@ -143,21 +146,23 @@ const Modal = ({ children, title, btnFooterTitle, isOpen, onClose, onCtaClick })
 
     return (
         isOpen &&
-        <>
-            <Overlay id="overlay" />
-            <ModalWraper>
-                <ModalHeader>
-                    <h2>{title}</h2>
-                    <button type="button" onClick={handleClose}>X</button>
-                </ModalHeader>
-                <ModalBody>
-                    {children}
-                </ModalBody>
-                <ModalFooter>
-                    <Button variant="tertiary" onClick={handleCtaClick} w={100}>{btnFooterTitle}</Button>
-                </ModalFooter>
-            </ModalWraper>
-        </>
+        <FocusTrap>
+            <div>
+                <Overlay id="overlay" />
+                <ModalWraper>
+                    <ModalHeader>
+                        <h2>{title}</h2>
+                        <button type="button" onClick={handleClose}>X</button>
+                    </ModalHeader>
+                    <ModalBody>
+                        {children}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="tertiary" onClick={handleCtaClick} w={100}>{btnFooterTitle}</Button>
+                    </ModalFooter>
+                </ModalWraper>
+            </div>
+        </FocusTrap>
     )
 }
 
