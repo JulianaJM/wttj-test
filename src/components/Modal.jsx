@@ -29,21 +29,22 @@ const ModalWraper = styled.div`
 
     @media only screen and (min-width: 768px) {
         width:50%;
-        height: 70vh;
+        height: 90vh;
     }
 `;
 
 const ModalHeader = styled.div`
-    display:flex;
-    justify-content:space-between;
+    display: flex;
+    justify-content: space-between;
     border-bottom: 1px solid #969696;
 
     button {
-        background:none;
-        border:none;
-        align-self:start;
-        font-size:1.5rem;
-        color:#969696;
+        background: none;
+        border: none;
+        align-self: start;
+        font-size: 1.5rem;
+        color: #969696;
+        cursor: pointer;
     }
     
     h2 {
@@ -55,11 +56,10 @@ const ModalHeader = styled.div`
 const ModalBody = styled.div`
     overflow-y:scroll;
     height:65vh;
-    padding: 25px 5px;;
+    padding: 25px 5px;
 
     @media only screen and (min-width: 768px) {
         width:100%;
-        height:80%;
     }
 
     
@@ -108,6 +108,25 @@ const Modal = ({ children, title, btnFooterTitle, isOpen, onClose, onCtaClick })
         handleClose();
     }
 
+     const onClickOutside = (event) => {
+         if (event.target.matches("#overlay")) {
+                handleClose();
+                event.preventDefault();
+              }
+    }
+
+    useEffect(() => {
+        document.addEventListener('scroll', saveScrollY);
+        document.addEventListener("click", onClickOutside, false);
+
+        return () => {
+            handleClose();
+            document.removeEventListener('scroll', saveScrollY);
+            document.removeEventListener('click', onClickOutside);
+
+        };
+    }, [])
+
     useEffect(() => {
         if (isOpen) {
             // disable scroll
@@ -122,22 +141,10 @@ const Modal = ({ children, title, btnFooterTitle, isOpen, onClose, onCtaClick })
 
     }, [isOpen])
 
-    useEffect(() => {
-        window.addEventListener('scroll', saveScrollY);
-        return () => {
-            handleClose();
-            window.removeEventListener('scroll', saveScrollY);
-        };
-    }, [])
-
-
-
-
-
     return (
         isOpen &&
         <>
-            <Overlay />
+            <Overlay id="overlay" />
             <ModalWraper>
                 <ModalHeader>
                     <h2>{title}</h2>

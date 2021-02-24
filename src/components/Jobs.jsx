@@ -7,7 +7,6 @@ import JobDescription from "./JobDescription";
 import { WEBSITE_REF } from "../utils/constants";
 
 
-
 const JobItem = styled.div`
     margin: 15px 0
 `;
@@ -57,8 +56,7 @@ const Jobs = ({ jobs, websitesUrls }) => {
 
     const websiteUrl = websitesUrls.find((website) => {
         return website.reference === WEBSITE_REF
-    }
-    )
+    })
 
     return (
         jobs.map(({ item }) => {
@@ -70,7 +68,9 @@ const Jobs = ({ jobs, websitesUrls }) => {
                                 <div>
                                     <Title>{item.name}</Title>
                                     <JobDesc>
-                                        <p>{item.contract_type.en}</p> {" - "} <p>{item.office.name}</p>
+                                        <p>{item.contract_type.en}</p> {" - "} 
+                                        <p>{item.office.name}</p> {" - "} 
+                                        <p>{item.department.name}</p>
                                     </JobDesc>
                                 </div>
                                 <Button variant="tertiary" onClick={() => showDescription(item.id)}>See more</Button>
